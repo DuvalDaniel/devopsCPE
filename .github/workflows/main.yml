@@ -26,6 +26,8 @@ jobs:
         working-directory: TP2/tp-devops-correction-docker/simple-api
 
         # define job to build and publish docker image
+
+
   build-and-push-docker-image:
     needs: test-backend
     # run only when code is compiling and tests are passing
@@ -33,6 +35,8 @@ jobs:
 
     # steps to perform in job
     steps:
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout code
         uses: actions/checkout@v2.5.0
 
