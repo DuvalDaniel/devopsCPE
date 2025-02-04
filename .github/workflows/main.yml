@@ -94,10 +94,7 @@ jobs:
           tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
-
-         - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -120,5 +117,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=DuvalDaniel_devopsCPE
         working-directory: TP2/tp-devops-correction-docker/simple-api
-     
 
