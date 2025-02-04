@@ -1,0 +1,55 @@
+name: CI DevOps 2025 - Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["CI devops 2025"]
+    types:
+      - completed
+
+jobs:
+  build-and-push-docker-images:
+    runs-on: ubuntu-22.04  # Specifies the environment to run the job on (Ubuntu 22.04)
+    if: github.event.workflow_run.head_branch == 'main' # Vérifie si la branche est main
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.5.0
+      
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image and push database
+        uses: docker/build-push-action@v3
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: TP2/tp-devops-correction-docker/database
+          # Note: tags has to be all lower-case
+          tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+          # build on feature branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build image and push backend
+        uses: docker/build-push-action@v3
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: TP2/tp-devops-correction-docker/simple-api
+          # Note: tags has to be all lower-case
+          tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+          # build on feature branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v3
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: TP2/tp-devops-correction-docker/http-server
+          # Note: tags has to be all lower-case
+          tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
+          # build on feature branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/main' }}
