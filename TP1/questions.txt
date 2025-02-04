@@ -1,0 +1,40 @@
+Compte rendu TP1 DEVOPS DANIEL DUVAL
+
+1-1 Why should we run the container with a flag -e to give the environment variables?
+Car elle nous permet de passer en ligne de commande une varaible d'environnement sans avoir a modifier le code. 
+
+
+1-2 Why do we need a volume to be attached to our postgres container?
+Pour garder une sauvegarde de nos modifications.
+
+
+1-3 Document your database container essentials: commands and Dockerfile.
+DockerFile:
+FROM postgres:14.1-alpine
+
+ENV POSTGRES_DB=db \
+   POSTGRES_USER=usr \
+   POSTGRES_PASSWORD=pwd    
+
+COPY /scripts/* /docker-entrypoint-initdb.d
+
+Commandes :
+ docker run -p 8888:5432 --name bdd --network app-network -v data:/var/lib/postgresql/data -d bdd
+pour lancer créer un container avec le volume bdd sur le port 5432, avec le network app-network en utilisant le volume data. on fait -d pour pouvoir toujours utiliser mon terminal. Puis je nomme mon container bdd
+ docker build -t bdd .
+On crée mon image a partir de mon dockerFile (qui est dans mon répértoire dans lequel je lance ma commande), -t pour ajouter un tag (ici on ne met rien donc on a latest) puis on nomme le volume bdd.
+
+
+1-4 Why do we need a multistage build? And explain each step of this dockerfile.
+Un build multi-étapes permet d’optimiser la taille de l’image Docker en séparant la compilation du code et son exécution. La première étape utilise un JDK pour compiler, tandis que la deuxième étape utilise un JRE plus léger pour exécuter l’application. Cela réduit la taille de l'image finale.
+Build (Compilation avec Maven) :
+
+FROM maven:3.9.9-amazoncorretto-21 AS myapp-build : Utilise une image avec Maven et JDK pour la compilation.
+COPY et RUN mvn package : Copie le code source et compile l’application en .jar.
+Run (Exécution avec JRE) :
+
+FROM amazoncorretto:21 : Utilise une image avec JRE pour exécuter le programme.
+COPY --from=myapp-build : Copie le .jar compilé depuis l’étape de build.
+ENTRYPOINT ["java", "-jar", "myapp.jar"] : Exécute l’application avec java -jar.
+
+
