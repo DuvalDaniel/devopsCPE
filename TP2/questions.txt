@@ -1,4 +1,15 @@
 2-1 What are testcontainers?
+Testcontainers est une bibliothèque Java permettant d'exécuter des conteneurs Docker légers pour les tests d'intégration. Elle est particulièrement utile pour tester des bases de données, des systèmes de messagerie ou d'autres dépendances externes sans nécessiter d'environnement de test complexe.
 
 2-2 Document your Github Actions configurations.
+Il fait dabord mes tests backend puis va lancer un autre workflow qui consiste a build mon image et la push sur mon repo personnelle. Car j'ai pu lui indiquer mes identifiants
+
+2-3 For what purpose do we need to push docker images?
+Pour le deploiment, la collaboration mais aussi une meilleur scalabilité et securité. Tout ces domaines sont bon bon pour la CI/CD
+
+
+2-4 Document your quality gate configuration.
+Une fois que tous mes workflow configurés correctement je vais pouvoir aller lancer une verif de sonar pour verifier que tout mon code et juste.
+
+BONUS fait 
 

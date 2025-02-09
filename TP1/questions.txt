@@ -38,3 +38,59 @@ COPY --from=myapp-build : Copie le .jar compilé depuis l’étape de build.
 ENTRYPOINT ["java", "-jar", "myapp.jar"] : Exécute l’application avec java -jar.
 
 
+1-5 Why do we need a reverse proxy?
+On en a besoin pour optimiser la sécurité, la performance et la scaailité des apps web.
+
+
+1-6 Why is docker-compose so important?
+Car il facilite le déploiement en automatisant la création le démarrage et l'arret des contenenrus avec une seule commande. Il simplifie donc la gestion d'apps multi-conteneur.
+
+
+1-7 Document docker-compose most important commands.
+docker-compose up : pour demarrer les services du .yml
+docker-compose down : arret des services
+docker-compose logs ; voir les logs
+docker-compose ps : voirs les services en cours
+
+ 1-8 Document your docker-compose file.
+services:
+
+  database:
+    build: "database"
+    environment:
+      - POSTGRES_PASSWORD=pwd
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    networks:
+      - my-network
+
+  simple-api:
+    build: "simple-api"
+    environment:
+      - DATABASE_HOST=database
+      - DATABASE_PASSWORD=pwd
+    networks:
+      - my-network
+
+  httpd:
+    build: "http-server"
+    ports:
+      - "80:80"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+
+volumes:
+  db-volume :
+
+On a nos troois services qui sont tous sur le meme network. Le database a besoin d'un volume pour avoir une sauvegarde de sa bdd. puis on a exposé uniquement le port 80 pour le httpd. On a aussi mis des variables d'env pour les identifiants de la bdd.
+
+
+1-9 Document your publication commands and published images in dockerhub.
+
+
+1-10 Why do we put our images into an online repo?
+Car c'est plus facile pour centraliser et partages facilement des images entre plusieurs personnes/environnement. Elle permet aussi l'automatisation CI/CD
+
